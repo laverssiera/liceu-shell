@@ -1,0 +1,32 @@
+name: CI
+
+# O shell consome @liceu/design-tokens por TAG e nunca define token; o painel
+# do JOHN le e transfere, nunca autoriza nem executa (R01 + P03); campo sem
+# dado e travessao (R02/R05); dourado so com epoca estabelecida (R04); a barra
+# de proveniencia e permanente (R07). scripts/check.py aplica tudo isso.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  constitution:
+    name: Tokens por tag · painel do JOHN sem autoridade · R02/R04/R05/R07
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: scripts/check.py
+        run: python scripts/check.py
+      # A folha de tokens fixada tem de existir de verdade na tag apontada.
+      - name: A tag de tokens apontada resolve
+        run: |
+          url=$(grep -o 'https://cdn.jsdelivr.net/gh/laverssiera/liceu-design-tokens@v[0-9.]*/dist/tokens.css' index.html | head -1)
+          echo "$url"; curl -sfI "$url" | head -1
