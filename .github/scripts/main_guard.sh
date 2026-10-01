@@ -15,6 +15,26 @@
 #
 # Entradas (env): GH_TOKEN, REPO, SHA, BEFORE, PUSHER. DRY_RUN=1 nao abre issue
 # (para simular localmente contra commits ja em main).
+#
+# COMO LER O VERMELHO DESTE CHECK — e o que ele NAO significa.
+#
+# A execucao que acusa um push direto fica vermelha PARA SEMPRE. O GitHub nao
+# reexecuta workflow passado, e fechar a issue nao muda a conclusao da
+# execucao. O painel limpa quando o PROXIMO push em main vier de um PR
+# mergeado: essa execucao nova passa a ser a mais recente deste workflow.
+#
+# Entao 'Main Guard vermelho em main' NAO quer dizer que a guarda esta
+# quebrada, nem que o push segue sem resposta. Quer dizer que houve um push
+# direto EM ALGUM MOMENTO. Para saber se ainda importa, duas coisas:
+#
+#   a DATA da execucao vermelha — ela e do dia do push, nao de hoje
+#   a ISSUE que ela abriu — se esta fechada, o push foi respondido
+#
+# Isto esta escrito aqui porque a leitura errada JA ACONTECEU: em 2026-09-29
+# este vermelho foi relatado como 'gate permanentemente vermelho', o que
+# sugeria defeito na guarda. Nao era: era um alarme pos-fato de 19/09, com a
+# issue #1 aberta e fechada, esperando o proximo merge por PR. Um alarme que
+# e lido como defeito perde a funcao de alarme.
 set -euo pipefail
 
 short="${SHA:0:7}"
